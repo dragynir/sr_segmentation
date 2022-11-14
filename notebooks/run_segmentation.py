@@ -12,6 +12,7 @@ from Unet_models import*
 import h5py as h5
 import patchify as patch
 import cv2
+import numpy as np
 
 
 def visualize(recon):
@@ -80,7 +81,12 @@ if __name__ == '__main__':
     model = UNet_3D(input_size=(256, 256, 256, 1))
     model.load_weights("../models/UNet_3D_16_256.hdf5")
 
-    predict_volume(model, np.ones((512, 512, 512)))
+    img = cv2.imread('/home/d_korostelev/Projects/super_resolution/Real-ESRGAN/datasets/real/sub/sandstone/1x_1024/recon_00100_s011.png')
+    img = img[:, :, 0]
+    data = np.stack([img] * 512, axis=0)
+
+    # np.ones((512, 512, 512))
+    predict_volume(model, data)
 
     # debug
     # vol = np.ones((1, 256, 256, 256))
