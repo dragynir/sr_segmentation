@@ -32,7 +32,7 @@ def visualize(recon):
 def predict_volume(model, data):
     ids_zero = np.where(data == 0)
 
-    patch_data = patch.patchify(data, (16, 256, 256), (8, 128, 128))
+    patch_data = patch.patchify(data, (256, 256, 256), 128)
 
     # data patches segmentation
     batch_size = 1
@@ -49,7 +49,7 @@ def predict_volume(model, data):
     segmented = result.reshape(patch_data.shape)
 
     print('recon 3d ...')
-    recon = recon_3D(data_patches=segmented, patch_step=(8, 128, 128), patch_size=(16, 256, 256),
+    recon = recon_3D(data_patches=segmented, patch_step=(128, 128, 128), patch_size=(256, 256, 256),
                      recon_shape=data.shape)
 
     recon = recon.astype(np.float32)
@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
     img = cv2.imread('/home/d_korostelev/Projects/super_resolution/Real-ESRGAN/datasets/real/sub/sandstone/1x_1024/recon_00100_s011.png')
     img = img[:, :, 0]
-    data = np.stack([img] * 16, axis=0)
+    data = np.stack([img] * 256, axis=0)
 
     # np.ones((512, 512, 512))
     predict_volume(model, data)
