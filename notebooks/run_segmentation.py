@@ -22,10 +22,10 @@ def visualize(recon):
     plt.imshow(recon[256, :, :], cmap='gray')
 
     plt.subplot(1, 3, 2)
-    plt.imshow(recon[:, 612, :], cmap='gray')
+    plt.imshow(recon[:, 500, :], cmap='gray')
 
     plt.subplot(1, 3, 3)
-    plt.imshow(recon[:, :, 612], cmap='gray')
+    plt.imshow(recon[:, :, 300], cmap='gray')
 
     plt.savefig('segmentation.png')
 
