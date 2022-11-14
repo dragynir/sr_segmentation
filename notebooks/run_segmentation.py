@@ -46,7 +46,7 @@ def predict_volume(model, data):
 
     vol = patch_data_merged
     vol = np.reshape(vol, vol.shape + (1,))
-    result = model.predict(vol, verbose=1, batch_size=batch_size)
+    result = model.predict(vol, verbose=1, batch_size=batch_size).squeeze()
 
     segmented = result.reshape(patch_data.shape)
     recon = patch.unpatchify(segmented, data.shape)
