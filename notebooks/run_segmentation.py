@@ -31,7 +31,9 @@ def visualize(recon):
 
 
 def predict_volume(model, data):
-    patch_data = patch.patchify(data, (256, 256, 256), 128)
+
+    path_size = (256, 256, 256)
+    patch_data = patch.patchify(data, path_size, 128)
 
     # data patches segmentation
     batch_size = 1
@@ -47,9 +49,12 @@ def predict_volume(model, data):
     result = model.predict(vol, verbose=1, batch_size=batch_size)
     segmented = result.reshape(patch_data.shape)
 
-    print('recon 3d ...')
-    recon = recon_3D(data_patches=segmented, patch_step=(128, 128, 128), patch_size=(256, 256, 256),
-                     recon_shape=data.shape)
+    recon = patch.unpatchify(segmented, path_size)
+
+    #
+    # print('recon 3d ...')
+    # recon = recon_3D(data_patches=segmented, patch_step=(128, 128, 128), patch_size=(256, 256, 256),
+    #                  recon_shape=data.shape)
 
     recon = recon.astype(np.float32)
 
