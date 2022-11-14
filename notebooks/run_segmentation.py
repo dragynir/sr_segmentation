@@ -34,6 +34,9 @@ def predict_volume(model, data):
 
     path_size = (256, 256, 256)
     patch_data = patch.patchify(data, path_size, 128)
+    patch_data_shape = patch_data.shape
+
+    patch.unpatchify(patch_data, path_size)
 
     # data patches segmentation
     batch_size = 1
@@ -47,8 +50,8 @@ def predict_volume(model, data):
     vol = patch_data_merged
     vol = np.reshape(vol, vol.shape + (1,))
     result = model.predict(vol, verbose=1, batch_size=batch_size)
-    segmented = result.reshape(patch_data.shape)
 
+    segmented = result.reshape(patch_data_shape)
     recon = patch.unpatchify(segmented, path_size)
 
     #
