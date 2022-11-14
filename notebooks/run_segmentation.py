@@ -13,6 +13,7 @@ import h5py as h5
 import patchify as patch
 import cv2
 import numpy as np
+from tqdm import tqdm
 
 
 def visualize(recon):
@@ -30,8 +31,6 @@ def visualize(recon):
 
 
 def predict_volume(model, data):
-    ids_zero = np.where(data == 0)
-
     patch_data = patch.patchify(data, (256, 256, 256), 128)
 
     # data patches segmentation
@@ -58,7 +57,25 @@ def predict_volume(model, data):
     recon[recon >= 0.8] = 1
     recon[recon < 0.8] = 0
 
-    visualize(recon)
+    return recon
+
+    # visualize(recon)
+
+
+def predict_images(model, source, out):
+    paths = os.listdir(source)
+    step = 256
+
+    for i in tqdm(range(0, len(paths), step)):
+        batch_paths = paths[i:i + step]
+        volume = np.stack(tuple(cv2.imread(os.path.join(source, p))[:, :, 0] for p in batch_paths))
+        recon = predict_volume(model, volume)
+
+        for p, mask in zip(batch_paths, recon):
+            mask = mask * 255
+            mask = np.stack([mask] * 3, axis=-1)
+            cv2.imwrite(os.path.join(out, f'mask_{p}'), mask)
+        break
 
 
 if __name__ == '__main__':
@@ -74,19 +91,20 @@ if __name__ == '__main__':
     # set mixed precision (32/16 bit) presision
     tf.keras.mixed_precision.experimental.set_policy('mixed_float16')
 
-    batch_size = 1
-
     model = UNet_3D(input_size=(256, 256, 256, 1))
     model.load_weights("../models/UNet_3D_16_256.hdf5")
 
-    img = cv2.imread('/home/d_korostelev/Projects/super_resolution/Real-ESRGAN/datasets/real/sub/sandstone/1x_1024/recon_00100_s011.png')
-    img = img[:, :, 0]
-    data = np.stack([img] * 256, axis=0)
+    source = '/home/d_korostelev/Projects/super_resolution/Real-ESRGAN/datasets/real/sub/sandstone/1x_1024/'
+    out = '../predictions/1x_1024'
 
-    # np.ones((512, 512, 512))
-    predict_volume(model, data)
+    os.makedirs(out, exist_ok=True)
 
-    # debug
-    # vol = np.ones((1, 256, 256, 256))
-    # result = model.predict(vol, verbose=1, batch_size=batch_size)
-    # print(result.shape)
+    predict_images(model, source, out)
+
+    #
+    # img = cv2.imread('/home/d_korostelev/Projects/super_resolution/Real-ESRGAN/datasets/real/sub/sandstone/1x_1024/recon_00100_s011.png')
+    # img = img[:, :, 0]
+    # data = np.stack([img] * 256, axis=0)
+    # # np.ones((512, 512, 512))
+    # predict_volume(model, data)
+
