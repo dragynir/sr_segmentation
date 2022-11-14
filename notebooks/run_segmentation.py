@@ -68,7 +68,7 @@ def predict_images(model, source, out):
 
     for i in tqdm(range(0, len(paths), step)):
         batch_paths = paths[i:i + step]
-        volume = np.stack(tuple(cv2.imread(os.path.join(source, p))[:, :, 0] for p in batch_paths))
+        volume = np.stack(tuple(cv2.imread(os.path.join(source, p))[:, :, 0] for p in batch_paths), axis=0)
         recon = predict_volume(model, volume)
 
         for p, mask in zip(batch_paths, recon):
