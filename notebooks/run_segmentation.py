@@ -32,7 +32,7 @@ def visualize(recon):
 def predict_volume(model, data):
     ids_zero = np.where(data == 0)
 
-    patch_data = patch.patchify(data, (8, 256, 256), 128)
+    patch_data = patch.patchify(data, (16, 256, 256), (8, 128, 128))
 
     # data patches segmentation
     batch_size = 1
