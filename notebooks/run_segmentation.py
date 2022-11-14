@@ -71,7 +71,8 @@ def predict_images(model, source, out):
         volume = np.stack(tuple(cv2.imread(os.path.join(source, p))[:, :, 0] for p in batch_paths), axis=0)
         recon = predict_volume(model, volume)
 
-        for p, mask in zip(batch_paths, recon):
+        for p, ind in zip(batch_paths, range(recon.shape[0])):
+            mask = recon[ind]
             mask = mask * 255
             mask = np.stack([mask] * 3, axis=-1)
             cv2.imwrite(os.path.join(out, f'mask_{p}'), mask)
