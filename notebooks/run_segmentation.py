@@ -15,6 +15,7 @@ import cv2
 
 
 def visualize(recon):
+    print('visualize...')
     plt.figure(figsize=(25, 25))
 
     plt.subplot(1, 3, 1)
@@ -48,6 +49,7 @@ def predict_volume(model, data):
     result = model.predict(vol, verbose=1, batch_size=batch_size)
     segmented = result.reshape(patch_data.shape)
 
+    print('recon 3d ...')
     recon = recon_3D(data_patches=segmented, patch_step=(128, 128, 128), patch_size=(256, 256, 256),
                      recon_shape=data.shape)
 
