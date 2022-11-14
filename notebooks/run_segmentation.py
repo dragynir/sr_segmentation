@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     img = cv2.imread('/home/d_korostelev/Projects/super_resolution/Real-ESRGAN/datasets/real/sub/sandstone/1x_1024/recon_00100_s011.png')
     img = img[:, :, 0]
-    data = np.stack([img] * 512, axis=0)
+    data = np.stack([img] * 128, axis=0)
 
     # np.ones((512, 512, 512))
     predict_volume(model, data)
