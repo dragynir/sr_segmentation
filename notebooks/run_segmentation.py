@@ -20,7 +20,7 @@ def visualize(recon):
     plt.figure(figsize=(25, 25))
 
     plt.subplot(1, 3, 1)
-    plt.imshow(recon[256, :, :], cmap='gray')
+    plt.imshow(recon[250, :, :], cmap='gray')
 
     plt.subplot(1, 3, 2)
     plt.imshow(recon[:, 500, :], cmap='gray')
