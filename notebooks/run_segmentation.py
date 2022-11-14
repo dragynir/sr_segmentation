@@ -19,15 +19,13 @@ def visualize(recon):
     print('visualize...')
     plt.figure(figsize=(25, 25))
 
+    img = recon[250, :, :]
     plt.subplot(1, 3, 1)
-    plt.imshow(recon[250, :, :], cmap='gray')
+    plt.imshow(img, cmap='gray')
 
-    plt.subplot(1, 3, 2)
-    plt.imshow(recon[:, 500, :], cmap='gray')
-
-    plt.subplot(1, 3, 3)
-    plt.imshow(recon[:, :, 300], cmap='gray')
-
+    img = img * 255
+    img = np.stack([img] * 3, axis=-1)
+    cv2.imwrite('mask.png', img)
     plt.savefig('segmentation.png')
 
 
