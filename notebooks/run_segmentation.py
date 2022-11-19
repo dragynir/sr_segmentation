@@ -34,8 +34,8 @@ def visualize(recon):
 
 def predict_volume(model, data):
 
-    patch_size = (256, 256, 256)
-    patch_step = 128
+    patch_size = (4, 256, 256)
+    patch_step = (2, 128, 128)
     patch_data = patch.patchify(data, patch_size, patch_step)
 
     # data patches segmentation
@@ -52,11 +52,11 @@ def predict_volume(model, data):
     result = model.predict(vol, verbose=1, batch_size=batch_size).squeeze()
 
     segmented = result.reshape(patch_data.shape)
-    # recon = patch.unpatchify(segmented, data.shape)  # no average mask (# TODO)
+    recon = patch.unpatchify(segmented, data.shape)  # no average mask (# TODO)
 
-    print('recon 3d ...')
-    recon = recon_3D(data_patches=segmented, patch_step=(patch_step, patch_step, patch_step), patch_size=patch_size,
-                     recon_shape=data.shape)
+    # print('recon 3d ...')
+    # recon = recon_3D(data_patches=segmented, patch_step=(patch_step, patch_step, patch_step), patch_size=patch_size,
+    #                  recon_shape=data.shape)
 
     recon = recon.astype(np.float32)
 
@@ -72,19 +72,16 @@ def predict_volume(model, data):
 def predict_images(model, df, out):
     paths = df.path.values
 
-    step = 256
-    for i in tqdm(range(0, len(paths), step)):
-        batch_paths = paths[i:i + step]
-        volume = np.stack(tuple(cv2.imread(p)[:, :, 0] for p in batch_paths), axis=0)
+    for p in paths:
+        image_name = os.path.basename(p)
+        image = cv2.imread(p)
+        volume = np.stack([image[:, :, 0]] * 4, axis=0)
         recon = predict_volume(model, volume)
-
-        for p, ind in zip(batch_paths, range(recon.shape[0])):
-            image_name = os.path.basename(p)
-            mask = recon[ind]
-            mask = mask * 255
-            mask = np.stack([mask] * 3, axis=-1)
-            cv2.imwrite(os.path.join(out, f'mask_{image_name}'), mask)
-            shutil.copy(p, os.path.join(out, f'image_{image_name}'))
+        mask = recon[0]
+        mask = mask * 255
+        mask = np.stack([mask] * 3, axis=-1)
+        cv2.imwrite(os.path.join(out, f'mask_{image_name}'), mask)
+        shutil.copy(p, os.path.join(out, f'image_{image_name}'))
 
 
 if __name__ == '__main__':
