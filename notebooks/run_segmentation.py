@@ -38,6 +38,9 @@ def predict_volume(model, data):
     patch_step = 128
     patch_data = patch.patchify(data, patch_size, patch_step)
 
+    print(data.shape)
+    print(patch_data.shape)
+
     # data patches segmentation
     batch_size = 1
 
