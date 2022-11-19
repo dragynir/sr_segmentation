@@ -69,6 +69,7 @@ def predict_volume(model, data):
 
 def predict_images(model, source, out):
     paths = os.listdir(source)
+    paths = list(filter(lambda x: '.png' in x, paths))
     step = 256
 
     for i in tqdm(range(0, len(paths), step)):
