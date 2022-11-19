@@ -67,15 +67,19 @@ def predict_volume(model, data):
 
     # visualize(recon)
 
+
 def image_name(path):
     return os.path.basename(path)
+
 
 def predict_images(model, df, source, out):
     df['path'] = df.path.apply(image_name)
     paths = os.listdir(source)
+    print(paths)
     paths = list(filter(lambda x: '.png' in x, paths))
-    paths = list(filter(lambda x: x in df.paths.values, paths))
+    paths = list(filter(lambda x: x in df.path.values, paths))
 
+    print(df.path.values)
     print(df.material.value_counts())
 
     step = 256
