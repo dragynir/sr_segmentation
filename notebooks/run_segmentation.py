@@ -55,11 +55,11 @@ def predict_volume(model, data):
     result = model.predict(vol, verbose=1, batch_size=batch_size).squeeze()
 
     segmented = result.reshape(patch_data.shape)
-    # recon = patch.unpatchify(segmented, data.shape)  # no average mask (# TODO)
+    recon = patch.unpatchify(segmented, data.shape)  # no average mask (# TODO)
 
-    print('recon 3d ...')
-    recon = recon_3D(data_patches=segmented, patch_step=(patch_step, patch_step, patch_step), patch_size=patch_size,
-                     recon_shape=data.shape)
+    # print('recon 3d ...')
+    # recon = recon_3D(data_patches=segmented, patch_step=(patch_step, patch_step, patch_step), patch_size=patch_size,
+    #                  recon_shape=data.shape)
 
     recon = recon.astype(np.float32)
 
@@ -78,13 +78,15 @@ def predict_images(model, df, out):
     for p in tqdm(paths):
         image_name = os.path.basename(p)
         image = cv2.imread(p)
+        image = cv2.resize(image, (512, 512))
         volume = np.stack([image[:, :, 0]] * 256, axis=0)
         recon = predict_volume(model, volume)
         mask = recon[0]
         mask = mask * 255
         mask = np.stack([mask] * 3, axis=-1)
         cv2.imwrite(os.path.join(out, f'mask_{image_name}'), mask)
-        shutil.copy(p, os.path.join(out, f'image_{image_name}'))
+        cv2.imwrite(os.path.join(out, f'image_{image_name}'), image)
+        # shutil.copy(p, os.path.join(out, f'image_{image_name}'))
 
 
 if __name__ == '__main__':
