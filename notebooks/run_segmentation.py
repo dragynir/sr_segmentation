@@ -55,11 +55,11 @@ def predict_volume(model, data):
     result = model.predict(vol, verbose=1, batch_size=batch_size).squeeze()
 
     segmented = result.reshape(patch_data.shape)
-    recon = patch.unpatchify(segmented, data.shape)  # no average mask (# TODO)
+    # recon = patch.unpatchify(segmented, data.shape)  # no average mask (# TODO)
 
-    # print('recon 3d ...')
-    # recon = recon_3D(data_patches=segmented, patch_step=(patch_step, patch_step, patch_step), patch_size=patch_size,
-    #                  recon_shape=data.shape)
+    print('recon 3d ...')
+    recon = recon_3D(data_patches=segmented, patch_step=(patch_step, patch_step, patch_step), patch_size=patch_size,
+                     recon_shape=data.shape)
 
     recon = recon.astype(np.float32)
 
