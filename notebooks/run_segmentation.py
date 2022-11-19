@@ -14,6 +14,7 @@ import patchify as patch
 import cv2
 import numpy as np
 from tqdm import tqdm
+import pandas as pd
 
 
 def visualize(recon):
@@ -67,11 +68,14 @@ def predict_volume(model, data):
     # visualize(recon)
 
 
-def predict_images(model, source, out):
+def predict_images(model, df, source, out):
     paths = os.listdir(source)
     paths = list(filter(lambda x: '.png' in x, paths))
-    step = 256
+    paths = list(filter(lambda x: x in df.paths.values, paths))
 
+    print(df.material.value_counts())
+
+    step = 256
     for i in tqdm(range(0, len(paths), step)):
         batch_paths = paths[i:i + step]
         volume = np.stack(tuple(cv2.imread(os.path.join(source, p))[:, :, 0] for p in batch_paths), axis=0)
@@ -85,6 +89,11 @@ def predict_images(model, source, out):
 
 
 if __name__ == '__main__':
+
+
+    df = pd.read_csv('/home/d_korostelev/Projects/super_resolution/data/v1_dataset_DeepRockSR.csv')
+    df = df[df.split == 'test']
+    df = df[df.material == 'sandstone']
 
     # check availible GPUS and set memory growth
     gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -105,7 +114,7 @@ if __name__ == '__main__':
 
     os.makedirs(out, exist_ok=True)
 
-    predict_images(model, source, out)
+    predict_images(model, df, source, out)
 
     #
     # img = cv2.imread('/home/d_korostelev/Projects/super_resolution/Real-ESRGAN/datasets/real/sub/sandstone/1x_1024/recon_00100_s011.png')
