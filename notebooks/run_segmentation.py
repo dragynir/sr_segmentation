@@ -71,7 +71,7 @@ def predict_volume(model, data):
 def predict_images(model, df, source, out):
     paths = os.listdir(source)
     paths = list(filter(lambda x: '.png' in x, paths))
-    paths = list(filter(lambda x: x in df.paths.values, paths))
+    paths = list(filter(lambda x: x in df.path.values, paths))
 
     print(df.material.value_counts())
 
