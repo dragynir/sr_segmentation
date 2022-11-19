@@ -81,7 +81,6 @@ def predict_images(model, source, out):
             mask = mask * 255
             mask = np.stack([mask] * 3, axis=-1)
             cv2.imwrite(os.path.join(out, f'mask_{p}'), mask)
-        break
 
 
 if __name__ == '__main__':
