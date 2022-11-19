@@ -69,33 +69,25 @@ def predict_volume(model, data):
     # visualize(recon)
 
 
-def image_name(path):
-    return os.path.basename(path)
-
-
-def predict_images(model, df, source, out):
-    df['path'] = df.path.apply(image_name)
-    paths = os.listdir(source)
-    paths = list(filter(lambda x: '.png' in x, paths))
-    paths = list(filter(lambda x: x in df.path.values, paths))
-    print(df.material.value_counts())
+def predict_images(model, df, out):
+    paths = df.path.values
 
     step = 256
     for i in tqdm(range(0, len(paths), step)):
         batch_paths = paths[i:i + step]
-        volume = np.stack(tuple(cv2.imread(os.path.join(source, p))[:, :, 0] for p in batch_paths), axis=0)
+        volume = np.stack(tuple(cv2.imread(p)[:, :, 0] for p in batch_paths), axis=0)
         recon = predict_volume(model, volume)
 
         for p, ind in zip(batch_paths, range(recon.shape[0])):
+            image_name = os.path.basename(p)
             mask = recon[ind]
             mask = mask * 255
             mask = np.stack([mask] * 3, axis=-1)
-            cv2.imwrite(os.path.join(out, f'mask_{p}'), mask)
-            shutil.copy(os.path.join(source, p), os.path.join(out, f'image_{p}'))
+            cv2.imwrite(os.path.join(out, f'mask_{image_name}'), mask)
+            shutil.copy(p, os.path.join(out, f'image_{image_name}'))
 
 
 if __name__ == '__main__':
-
 
     df = pd.read_csv('/home/d_korostelev/Projects/super_resolution/data/v1_dataset_DeepRockSR.csv')
     df = df[df.split == 'test']
