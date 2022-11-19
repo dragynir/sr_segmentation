@@ -34,7 +34,7 @@ def visualize(recon):
 
 def predict_volume(model, data):
 
-    patch_size = (128, 256, 256)
+    patch_size = (256, 256, 256)
     patch_step = 128
     patch_data = patch.patchify(data, patch_size, patch_step)
 
@@ -78,7 +78,7 @@ def predict_images(model, df, out):
     for p in tqdm(paths):
         image_name = os.path.basename(p)
         image = cv2.imread(p)
-        volume = np.stack([image[:, :, 0]] * 128, axis=0)
+        volume = np.stack([image[:, :, 0]] * 256, axis=0)
         recon = predict_volume(model, volume)
         mask = recon[0]
         mask = mask * 255
