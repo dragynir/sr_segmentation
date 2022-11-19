@@ -100,8 +100,8 @@ if __name__ == '__main__':
     model = UNet_3D(input_size=(256, 256, 256, 1))
     model.load_weights("../models/UNet_3D_16_256.hdf5")
 
-    source = '/home/d_korostelev/Projects/super_resolution/Real-ESRGAN/datasets/real/sub/sandstone/1x_1024/'
-    out = '../predictions/1x_1024'
+    source = '/home/d_korostelev/Projects/super_resolution/Real-ESRGAN/datasets/tomo_test/'
+    out = '../predictions/tomo_test'
 
     os.makedirs(out, exist_ok=True)
 
