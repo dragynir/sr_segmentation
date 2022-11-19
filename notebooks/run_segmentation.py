@@ -15,6 +15,7 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 import pandas as pd
+import shutil
 
 
 def visualize(recon):
@@ -75,11 +76,8 @@ def image_name(path):
 def predict_images(model, df, source, out):
     df['path'] = df.path.apply(image_name)
     paths = os.listdir(source)
-    print(paths)
     paths = list(filter(lambda x: '.png' in x, paths))
     paths = list(filter(lambda x: x in df.path.values, paths))
-
-    print(df.path.values)
     print(df.material.value_counts())
 
     step = 256
@@ -93,6 +91,7 @@ def predict_images(model, df, source, out):
             mask = mask * 255
             mask = np.stack([mask] * 3, axis=-1)
             cv2.imwrite(os.path.join(out, f'mask_{p}'), mask)
+            shutil.copy(os.path.join(source, p), os.path.join(out, f'image_{p}'))
 
 
 if __name__ == '__main__':
