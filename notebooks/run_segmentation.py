@@ -64,8 +64,8 @@ def predict_volume(model, data):
     recon = recon.astype(np.float32)
 
     # threshold
-    recon[recon >= 0.8] = 1
-    recon[recon < 0.8] = 0
+    recon[recon >= 0.5] = 1
+    recon[recon < 0.5] = 0
 
     return recon
 
