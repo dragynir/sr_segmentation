@@ -112,7 +112,7 @@ if __name__ == '__main__':
 
     os.makedirs(out, exist_ok=True)
 
-    predict_images(model, df, source, out)
+    predict_images(model, df, out)
 
     #
     # img = cv2.imread('/home/d_korostelev/Projects/super_resolution/Real-ESRGAN/datasets/real/sub/sandstone/1x_1024/recon_00100_s011.png')
